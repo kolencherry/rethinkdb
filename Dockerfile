@@ -5,15 +5,14 @@
 #
 
 # Pull base image.
-FROM dockerfile/ubuntu
+FROM centos:centos6
+
+RUN yum clean all && yum update -y && yum install -y wget
 
 # Install RethinkDB.
-RUN \
-  echo "deb http://download.rethinkdb.com/apt `lsb_release -cs` main" > /etc/apt/sources.list.d/rethinkdb.list && \
-  wget -O- http://download.rethinkdb.com/apt/pubkey.gpg | apt-key add - && \
-  apt-get update && \
-  apt-get install -y rethinkdb && \
-  rm -rf /var/lib/apt/lists/*
+RUN wget http://download.rethinkdb.com/centos/6/`uname -m`/rethinkdb.repo \
+    -O /etc/yum.repos.d/rethinkdb.repo
+RUN yum install -y rethinkdb
 
 # Define mountable directories.
 VOLUME ["/data"]
